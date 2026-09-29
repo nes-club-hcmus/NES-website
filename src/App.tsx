@@ -16,7 +16,6 @@ import { NextJsBlueprintModal } from './components/NextJsBlueprintModal';
 import { GitExportModal } from './components/GitExportModal';
 import { Footer } from './components/Footer';
 import { StorageService } from './services/storageService';
-import { downloadProjectZip } from './services/exportZipService';
 import { Language, translations } from './data/translations';
 import {
   ClubInfo,
@@ -334,7 +333,9 @@ export default function App() {
       <GitExportModal
         isOpen={isGitExportOpen}
         onClose={() => setIsGitExportOpen(false)}
-        onDownloadZip={downloadProjectZip}
+        onDownloadZip={() => {
+          window.open('https://github.com/nes-club-hcmus/NES-website/archive/refs/heads/main.zip', '_blank');
+        }}
       />
 
       {/* Footer */}
