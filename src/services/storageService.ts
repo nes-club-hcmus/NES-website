@@ -1,239 +1,241 @@
-import { INITIAL_CLUB_INFO, INITIAL_MEMBERS, INITIAL_EVENTS, INITIAL_POSTS, INITIAL_APPLICATIONS } from "/src/data/initialData.ts";
+import {
+  ClubMember,
+  ClubEvent,
+  BlogPost,
+  MembershipApplication,
+  ClubInfo,
+} from '../types';
+import {
+  INITIAL_CLUB_INFO,
+  INITIAL_MEMBERS,
+  INITIAL_EVENTS,
+  INITIAL_POSTS,
+  INITIAL_APPLICATIONS,
+} from '../data/initialData';
+
 const STORAGE_KEYS = {
-	INFO: "uniclub_info",
-	MEMBERS: "uniclub_members",
-	EVENTS: "uniclub_events",
-	POSTS: "uniclub_posts",
-	APPLICATIONS: "uniclub_applications"
-};
-function safeGet(key, fallback) {
-	try {
-		const raw = localStorage.getItem(key);
-		if (!raw) return fallback;
-		return JSON.parse(raw);
-	} catch (e) {
-		console.warn(`Error reading ${key} from storage:`, e);
-		return fallback;
-	}
-}
-function safeSet(key, value) {
-	try {
-		localStorage.setItem(key, JSON.stringify(value));
-	} catch (e) {
-		console.error(`Error saving ${key} to storage:`, e);
-	}
-}
-export const StorageService = {
-	// Club Info
-	getClubInfo() {
-		return safeGet(STORAGE_KEYS.INFO, INITIAL_CLUB_INFO);
-	},
-	saveClubInfo(info) {
-		safeSet(STORAGE_KEYS.INFO, info);
-	},
-	// Members
-	getMembers() {
-		return safeGet(STORAGE_KEYS.MEMBERS, INITIAL_MEMBERS);
-	},
-	saveMembers(members) {
-		safeSet(STORAGE_KEYS.MEMBERS, members);
-	},
-	addMember(member) {
-		const members = this.getMembers();
-		const newMember = {
-			...member,
-			id: `mem-${Date.now()}`,
-			joinedDate: new Date().toISOString().split("T")[0]
-		};
-		members.unshift(newMember);
-		this.saveMembers(members);
-		return newMember;
-	},
-	updateMember(id, updates) {
-		const members = this.getMembers();
-		const index = members.findIndex((m) => m.id === id);
-		if (index === -1) return null;
-		members[index] = {
-			...members[index],
-			...updates
-		};
-		this.saveMembers(members);
-		return members[index];
-	},
-	deleteMember(id) {
-		const members = this.getMembers();
-		const filtered = members.filter((m) => m.id !== id);
-		if (filtered.length === members.length) return false;
-		this.saveMembers(filtered);
-		return true;
-	},
-	// Events
-	getEvents() {
-		return safeGet(STORAGE_KEYS.EVENTS, INITIAL_EVENTS);
-	},
-	saveEvents(events) {
-		safeSet(STORAGE_KEYS.EVENTS, events);
-	},
-	addEvent(event) {
-		const events = this.getEvents();
-		const newEvent = {
-			...event,
-			id: `ev-${Date.now()}`,
-			rsvps: []
-		};
-		events.unshift(newEvent);
-		this.saveEvents(events);
-		return newEvent;
-	},
-	updateEvent(id, updates) {
-		const events = this.getEvents();
-		const index = events.findIndex((e) => e.id === id);
-		if (index === -1) return null;
-		events[index] = {
-			...events[index],
-			...updates
-		};
-		this.saveEvents(events);
-		return events[index];
-	},
-	deleteEvent(id) {
-		const events = this.getEvents();
-		const filtered = events.filter((e) => e.id !== id);
-		if (filtered.length === events.length) return false;
-		this.saveEvents(filtered);
-		return true;
-	},
-	toggleRsvp(eventId, email) {
-		const events = this.getEvents();
-		const ev = events.find((e) => e.id === eventId);
-		if (!ev) return {
-			success: false,
-			rsvped: false,
-			count: 0
-		};
-		const emailTrimmed = email.trim().toLowerCase();
-		const hasRsvped = ev.rsvps.includes(emailTrimmed);
-		if (hasRsvped) {
-			ev.rsvps = ev.rsvps.filter((e) => e !== emailTrimmed);
-		} else {
-			if (ev.rsvps.length >= ev.capacity) {
-				return {
-					success: false,
-					rsvped: false,
-					count: ev.rsvps.length
-				};
-			}
-			ev.rsvps.push(emailTrimmed);
-		}
-		this.saveEvents(events);
-		return {
-			success: true,
-			rsvped: !hasRsvped,
-			count: ev.rsvps.length
-		};
-	},
-	// Blog Posts
-	getPosts() {
-		return safeGet(STORAGE_KEYS.POSTS, INITIAL_POSTS);
-	},
-	savePosts(posts) {
-		safeSet(STORAGE_KEYS.POSTS, posts);
-	},
-	addPost(post) {
-		const posts = this.getPosts();
-		const newPost = {
-			...post,
-			id: `post-${Date.now()}`,
-			likes: 0,
-			publishedAt: new Date().toISOString().split("T")[0]
-		};
-		posts.unshift(newPost);
-		this.savePosts(posts);
-		return newPost;
-	},
-	updatePost(id, updates) {
-		const posts = this.getPosts();
-		const index = posts.findIndex((p) => p.id === id);
-		if (index === -1) return null;
-		posts[index] = {
-			...posts[index],
-			...updates
-		};
-		this.savePosts(posts);
-		return posts[index];
-	},
-	deletePost(id) {
-		const posts = this.getPosts();
-		const filtered = posts.filter((p) => p.id !== id);
-		if (filtered.length === posts.length) return false;
-		this.savePosts(filtered);
-		return true;
-	},
-	likePost(id) {
-		const posts = this.getPosts();
-		const post = posts.find((p) => p.id === id);
-		if (!post) return 0;
-		post.likes += 1;
-		this.savePosts(posts);
-		return post.likes;
-	},
-	// Applications
-	getApplications() {
-		return safeGet(STORAGE_KEYS.APPLICATIONS, INITIAL_APPLICATIONS);
-	},
-	saveApplications(apps) {
-		safeSet(STORAGE_KEYS.APPLICATIONS, apps);
-	},
-	addApplication(app) {
-		const apps = this.getApplications();
-		const newApp = {
-			...app,
-			id: `app-${Date.now()}`,
-			status: "Pending",
-			submittedAt: new Date().toISOString()
-		};
-		apps.unshift(newApp);
-		this.saveApplications(apps);
-		return newApp;
-	},
-	updateApplicationStatus(id, status, adminNotes) {
-		const apps = this.getApplications();
-		const app = apps.find((a) => a.id === id);
-		if (!app) return false;
-		app.status = status;
-		if (adminNotes !== undefined) {
-			app.adminNotes = adminNotes;
-		}
-		this.saveApplications(apps);
-		return true;
-	},
-	deleteApplication(id) {
-		const apps = this.getApplications();
-		const filtered = apps.filter((a) => a.id !== id);
-		if (filtered.length === apps.length) return false;
-		this.saveApplications(filtered);
-		return true;
-	},
-	// Export full database seed for MongoDB / Next.js
-	exportDatabaseSeed() {
-		return {
-			clubInfo: this.getClubInfo(),
-			members: this.getMembers(),
-			events: this.getEvents(),
-			posts: this.getPosts(),
-			applications: this.getApplications(),
-			exportedAt: new Date().toISOString(),
-			schemaVersion: "1.0.0"
-		};
-	},
-	// Reset to initial defaults
-	resetToDefaults() {
-		localStorage.removeItem(STORAGE_KEYS.INFO);
-		localStorage.removeItem(STORAGE_KEYS.MEMBERS);
-		localStorage.removeItem(STORAGE_KEYS.EVENTS);
-		localStorage.removeItem(STORAGE_KEYS.POSTS);
-		localStorage.removeItem(STORAGE_KEYS.APPLICATIONS);
-	}
+  INFO: 'uniclub_info',
+  MEMBERS: 'uniclub_members',
+  EVENTS: 'uniclub_events',
+  POSTS: 'uniclub_posts',
+  APPLICATIONS: 'uniclub_applications',
 };
 
-//# sourceMappingURL=data:application/json;base64,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SyxpQkFBaUIsSUFBSTtFQUMxQixPQUFPO0NBQ1Q7Q0FDQSx3QkFBd0IsSUFBWSxRQUF5QyxZQUE4QjtFQUN6RyxNQUFNLE9BQU8sS0FBSyxnQkFBZ0I7RUFDbEMsTUFBTSxNQUFNLEtBQUssTUFBTSxNQUFNLEVBQUUsT0FBTyxFQUFFO0VBQ3hDLElBQUksQ0FBQyxLQUFLLE9BQU87RUFDakIsSUFBSSxTQUFTO0VBQ2IsSUFBSSxlQUFlLFdBQVc7R0FDNUIsSUFBSSxhQUFhO0VBQ25CO0VBQ0EsS0FBSyxpQkFBaUIsSUFBSTtFQUMxQixPQUFPO0NBQ1Q7Q0FDQSxrQkFBa0IsSUFBcUI7RUFDckMsTUFBTSxPQUFPLEtBQUssZ0JBQWdCO0VBQ2xDLE1BQU0sV0FBVyxLQUFLLFFBQVEsTUFBTSxFQUFFLE9BQU8sRUFBRTtFQUMvQyxJQUFJLFNBQVMsV0FBVyxLQUFLLFFBQVEsT0FBTztFQUM1QyxLQUFLLGlCQUFpQixRQUFRO0VBQzlCLE9BQU87Q0FDVDs7Q0FHQSxxQkFBcUI7RUFDbkIsT0FBTztHQUNMLFVBQVUsS0FBSyxZQUFZO0dBQzNCLFNBQVMsS0FBSyxXQUFXO0dBQ3pCLFFBQVEsS0FBSyxVQUFVO0dBQ3ZCLE9BQU8sS0FBSyxTQUFTO0dBQ3JCLGNBQWMsS0FBSyxnQkFBZ0I7R0FDbkMsWUFBWSxJQUFJLEtBQUssQ0FBQyxDQUFDLFlBQVk7R0FDbkMsZUFBZTtFQUNqQjtDQUNGOztDQUdBLGtCQUFrQjtFQUNoQixhQUFhLFdBQVcsYUFBYSxJQUFJO0VBQ3pDLGFBQWEsV0FBVyxhQUFhLE9BQU87RUFDNUMsYUFBYSxXQUFXLGFBQWEsTUFBTTtFQUMzQyxhQUFhLFdBQVcsYUFBYSxLQUFLO0VBQzFDLGFBQWEsV0FBVyxhQUFhLFlBQVk7Q0FDbkQ7QUFDRiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJzdG9yYWdlU2VydmljZS50cyJdLCJ2ZXJzaW9uIjozLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge1xuICBDbHViTWVtYmVyLFxuICBDbHViRXZlbnQsXG4gIEJsb2dQb3N0LFxuICBNZW1iZXJzaGlwQXBwbGljYXRpb24sXG4gIENsdWJJbmZvLFxufSBmcm9tICcuLi90eXBlcyc7XG5pbXBvcnQge1xuICBJTklUSUFMX0NMVUJfSU5GTyxcbiAgSU5JVElBTF9NRU1CRVJTLFxuICBJTklUSUFMX0VWRU5UUyxcbiAgSU5JVElBTF9QT1NUUyxcbiAgSU5JVElBTF9BUFBMSUNBVElPTlMsXG59IGZyb20gJy4uL2RhdGEvaW5pdGlhbERhdGEnO1xuXG5jb25zdCBTVE9SQUdFX0tFWVMgPSB7XG4gIElORk86ICd1bmljbHViX2luZm8nLFxuICBNRU1CRVJTOiAndW5pY2x1Yl9tZW1iZXJzJyxcbiAgRVZFTlRTOiAndW5pY2x1Yl9ldmVudHMnLFxuICBQT1NUUzogJ3VuaWNsdWJfcG9zdHMnLFxuICBBUFBMSUNBVElPTlM6ICd1bmljbHViX2FwcGxpY2F0aW9ucycsXG59O1xuXG5mdW5jdGlvbiBzYWZlR2V0PFQ+KGtleTogc3RyaW5nLCBmYWxsYmFjazogVCk6IFQge1xuICB0cnkge1xuICAgIGNvbnN0IHJhdyA9IGxvY2FsU3RvcmFnZS5nZXRJdGVtKGtleSk7XG4gICAgaWYgKCFyYXcpIHJldHVybiBmYWxsYmFjaztcbiAgICByZXR1cm4gSlNPTi5wYXJzZShyYXcpIGFzIFQ7XG4gIH0gY2F0Y2ggKGUpIHtcbiAgICBjb25zb2xlLndhcm4oYEVycm9yIHJlYWRpbmcgJHtrZXl9IGZyb20gc3RvcmFnZTpgLCBlKTtcbiAgICByZXR1cm4gZmFsbGJhY2s7XG4gIH1cbn1cblxuZnVuY3Rpb24gc2FmZVNldDxUPihrZXk6IHN0cmluZywgdmFsdWU6IFQpOiB2b2lkIHtcbiAgdHJ5IHtcbiAgICBsb2NhbFN0b3JhZ2Uuc2V0SXRlbShrZXksIEpTT04uc3RyaW5naWZ5KHZhbHVlKSk7XG4gIH0gY2F0Y2ggKGUpIHtcbiAgICBjb25zb2xlLmVycm9yKGBFcnJvciBzYXZpbmcgJHtrZXl9IHRvIHN0b3JhZ2U6YCwgZSk7XG4gIH1cbn1cblxuZXhwb3J0IGNvbnN0IFN0b3JhZ2VTZXJ2aWNlID0ge1xuICAvLyBDbHViIEluZm9cbiAgZ2V0Q2x1YkluZm8oKTogQ2x1YkluZm8ge1xuICAgIHJldHVybiBzYWZlR2V0PENsdWJJbmZvPihTVE9SQUdFX0tFWVMuSU5GTywgSU5JVElBTF9DTFVCX0lORk8pO1xuICB9LFxuICBzYXZlQ2x1YkluZm8oaW5mbzogQ2x1YkluZm8pOiB2b2lkIHtcbiAgICBzYWZlU2V0KFNUT1JBR0VfS0VZUy5JTkZPLCBpbmZvKTtcbiAgfSxcblxuICAvLyBNZW1iZXJzXG4gIGdldE1lbWJlcnMoKTogQ2x1Yk1lbWJlcltdIHtcbiAgICByZXR1cm4gc2FmZUdldDxDbHViTWVtYmVyW10+KFNUT1JBR0VfS0VZUy5NRU1CRVJTLCBJTklUSUFMX01FTUJFUlMpO1xuICB9LFxuICBzYXZlTWVtYmVycyhtZW1iZXJzOiBDbHViTWVtYmVyW10pOiB2b2lkIHtcbiAgICBzYWZlU2V0KFNUT1JBR0VfS0VZUy5NRU1CRVJTLCBtZW1iZXJzKTtcbiAgfSxcbiAgYWRkTWVtYmVyKG1lbWJlcjogT21pdDxDbHViTWVtYmVyLCAnaWQnIHwgJ2pvaW5lZERhdGUnPik6IENsdWJNZW1iZXIge1xuICAgIGNvbnN0IG1lbWJlcnMgPSB0aGlzLmdldE1lbWJlcnMoKTtcbiAgICBjb25zdCBuZXdNZW1iZXI6IENsdWJNZW1iZXIgPSB7XG4gICAgICAuLi5tZW1iZXIsXG4gICAgICBpZDogYG1lbS0ke0RhdGUubm93KCl9YCxcbiAgICAgIGpvaW5lZERhdGU6IG5ldyBEYXRlKCkudG9JU09TdHJpbmcoKS5zcGxpdCgnVCcpWzBdLFxuICAgIH07XG4gICAgbWVtYmVycy51bnNoaWZ0KG5ld01lbWJlcik7XG4gICAgdGhpcy5zYXZlTWVtYmVycyhtZW1iZXJzKTtcbiAgICByZXR1cm4gbmV3TWVtYmVyO1xuICB9LFxuICB1cGRhdGVNZW1iZXIoaWQ6IHN0cmluZywgdXBkYXRlczogUGFydGlhbDxDbHViTWVtYmVyPik6IENsdWJNZW1iZXIgfCBudWxsIHtcbiAgICBjb25zdCBtZW1iZXJzID0gdGhpcy5nZXRNZW1iZXJzKCk7XG4gICAgY29uc3QgaW5kZXggPSBtZW1iZXJzLmZpbmRJbmRleCgobSkgPT4gbS5pZCA9PT0gaWQpO1xuICAgIGlmIChpbmRleCA9PT0gLTEpIHJldHVybiBudWxsO1xuICAgIG1lbWJlcnNbaW5kZXhdID0geyAuLi5tZW1iZXJzW2luZGV4XSwgLi4udXBkYXRlcyB9O1xuICAgIHRoaXMuc2F2ZU1lbWJlcnMobWVtYmVycyk7XG4gICAgcmV0dXJuIG1lbWJlcnNbaW5kZXhdO1xuICB9LFxuICBkZWxldGVNZW1iZXIoaWQ6IHN0cmluZyk6IGJvb2xlYW4ge1xuICAgIGNvbnN0IG1lbWJlcnMgPSB0aGlzLmdldE1lbWJlcnMoKTtcbiAgICBjb25zdCBmaWx0ZXJlZCA9IG1lbWJlcnMuZmlsdGVyKChtKSA9PiBtLmlkICE9PSBpZCk7XG4gICAgaWYgKGZpbHRlcmVkLmxlbmd0aCA9PT0gbWVtYmVycy5sZW5ndGgpIHJldHVybiBmYWxzZTtcbiAgICB0aGlzLnNhdmVNZW1iZXJzKGZpbHRlcmVkKTtcbiAgICByZXR1cm4gdHJ1ZTtcbiAgfSxcblxuICAvLyBFdmVudHNcbiAgZ2V0RXZlbnRzKCk6IENsdWJFdmVudFtdIHtcbiAgICByZXR1cm4gc2FmZUdldDxDbHViRXZlbnRbXT4oU1RPUkFHRV9LRVlTLkVWRU5UUywgSU5JVElBTF9FVkVOVFMpO1xuICB9LFxuICBzYXZlRXZlbnRzKGV2ZW50czogQ2x1YkV2ZW50W10pOiB2b2lkIHtcbiAgICBzYWZlU2V0KFNUT1JBR0VfS0VZUy5FVkVOVFMsIGV2ZW50cyk7XG4gIH0sXG4gIGFkZEV2ZW50KGV2ZW50OiBPbWl0PENsdWJFdmVudCwgJ2lkJyB8ICdyc3Zwcyc+KTogQ2x1YkV2ZW50IHtcbiAgICBjb25zdCBldmVudHMgPSB0aGlzLmdldEV2ZW50cygpO1xuICAgIGNvbnN0IG5ld0V2ZW50OiBDbHViRXZlbnQgPSB7XG4gICAgICAuLi5ldmVudCxcbiAgICAgIGlkOiBgZXYtJHtEYXRlLm5vdygpfWAsXG4gICAgICByc3ZwczogW10sXG4gICAgfTtcbiAgICBldmVudHMudW5zaGlmdChuZXdFdmVudCk7XG4gICAgdGhpcy5zYXZlRXZlbnRzKGV2ZW50cyk7XG4gICAgcmV0dXJuIG5ld0V2ZW50O1xuICB9LFxuICB1cGRhdGVFdmVudChpZDogc3RyaW5nLCB1cGRhdGVzOiBQYXJ0aWFsPENsdWJFdmVudD4pOiBDbHViRXZlbnQgfCBudWxsIHtcbiAgICBjb25zdCBldmVudHMgPSB0aGlzLmdldEV2ZW50cygpO1xuICAgIGNvbnN0IGluZGV4ID0gZXZlbnRzLmZpbmRJbmRleCgoZSkgPT4gZS5pZCA9PT0gaWQpO1xuICAgIGlmIChpbmRleCA9PT0gLTEpIHJldHVybiBudWxsO1xuICAgIGV2ZW50c1tpbmRleF0gPSB7IC4uLmV2ZW50c1tpbmRleF0sIC4uLnVwZGF0ZXMgfTtcbiAgICB0aGlzLnNhdmVFdmVudHMoZXZlbnRzKTtcbiAgICByZXR1cm4gZXZlbnRzW2luZGV4XTtcbiAgfSxcbiAgZGVsZXRlRXZlbnQoaWQ6IHN0cmluZyk6IGJvb2xlYW4ge1xuICAgIGNvbnN0IGV2ZW50cyA9IHRoaXMuZ2V0RXZlbnRzKCk7XG4gICAgY29uc3QgZmlsdGVyZWQgPSBldmVudHMuZmlsdGVyKChlKSA9PiBlLmlkICE9PSBpZCk7XG4gICAgaWYgKGZpbHRlcmVkLmxlbmd0aCA9PT0gZXZlbnRzLmxlbmd0aCkgcmV0dXJuIGZhbHNlO1xuICAgIHRoaXMuc2F2ZUV2ZW50cyhmaWx0ZXJlZCk7XG4gICAgcmV0dXJuIHRydWU7XG4gIH0sXG4gIHRvZ2dsZVJzdnAoZXZlbnRJZDogc3RyaW5nLCBlbWFpbDogc3RyaW5nKTogeyBzdWNjZXNzOiBib29sZWFuOyByc3ZwZWQ6IGJvb2xlYW47IGNvdW50OiBudW1iZXIgfSB7XG4gICAgY29uc3QgZXZlbnRzID0gdGhpcy5nZXRFdmVudHMoKTtcbiAgICBjb25zdCBldiA9IGV2ZW50cy5maW5kKChlKSA9PiBlLmlkID09PSBldmVudElkKTtcbiAgICBpZiAoIWV2KSByZXR1cm4geyBzdWNjZXNzOiBmYWxzZSwgcnN2cGVkOiBmYWxzZSwgY291bnQ6IDAgfTtcblxuICAgIGNvbnN0IGVtYWlsVHJpbW1lZCA9IGVtYWlsLnRyaW0oKS50b0xvd2VyQ2FzZSgpO1xuICAgIGNvbnN0IGhhc1JzdnBlZCA9IGV2LnJzdnBzLmluY2x1ZGVzKGVtYWlsVHJpbW1lZCk7XG5cbiAgICBpZiAoaGFzUnN2cGVkKSB7XG4gICAgICBldi5yc3ZwcyA9IGV2LnJzdnBzLmZpbHRlcigoZSkgPT4gZSAhPT0gZW1haWxUcmltbWVkKTtcbiAgICB9IGVsc2Uge1xuICAgICAgaWYgKGV2LnJzdnBzLmxlbmd0aCA+PSBldi5jYXBhY2l0eSkge1xuICAgICAgICByZXR1cm4geyBzdWNjZXNzOiBmYWxzZSwgcnN2cGVkOiBmYWxzZSwgY291bnQ6IGV2LnJzdnBzLmxlbmd0aCB9O1xuICAgICAgfVxuICAgICAgZXYucnN2cHMucHVzaChlbWFpbFRyaW1tZWQpO1xuICAgIH1cbiAgICB0aGlzLnNhdmVFdmVudHMoZXZlbnRzKTtcbiAgICByZXR1cm4geyBzdWNjZXNzOiB0cnVlLCByc3ZwZWQ6ICFoYXNSc3ZwZWQsIGNvdW50OiBldi5yc3Zwcy5sZW5ndGggfTtcbiAgfSxcblxuICAvLyBCbG9nIFBvc3RzXG4gIGdldFBvc3RzKCk6IEJsb2dQb3N0W10ge1xuICAgIHJldHVybiBzYWZlR2V0PEJsb2dQb3N0W10+KFNUT1JBR0VfS0VZUy5QT1NUUywgSU5JVElBTF9QT1NUUyk7XG4gIH0sXG4gIHNhdmVQb3N0cyhwb3N0czogQmxvZ1Bvc3RbXSk6IHZvaWQge1xuICAgIHNhZmVTZXQoU1RPUkFHRV9LRVlTLlBPU1RTLCBwb3N0cyk7XG4gIH0sXG4gIGFkZFBvc3QocG9zdDogT21pdDxCbG9nUG9zdCwgJ2lkJyB8ICdsaWtlcycgfCAncHVibGlzaGVkQXQnPik6IEJsb2dQb3N0IHtcbiAgICBjb25zdCBwb3N0cyA9IHRoaXMuZ2V0UG9zdHMoKTtcbiAgICBjb25zdCBuZXdQb3N0OiBCbG9nUG9zdCA9IHtcbiAgICAgIC4uLnBvc3QsXG4gICAgICBpZDogYHBvc3QtJHtEYXRlLm5vdygpfWAsXG4gICAgICBsaWtlczogMCxcbiAgICAgIHB1Ymxpc2hlZEF0OiBuZXcgRGF0ZSgpLnRvSVNPU3RyaW5nKCkuc3BsaXQoJ1QnKVswXSxcbiAgICB9O1xuICAgIHBvc3RzLnVuc2hpZnQobmV3UG9zdCk7XG4gICAgdGhpcy5zYXZlUG9zdHMocG9zdHMpO1xuICAgIHJldHVybiBuZXdQb3N0O1xuICB9LFxuICB1cGRhdGVQb3N0KGlkOiBzdHJpbmcsIHVwZGF0ZXM6IFBhcnRpYWw8QmxvZ1Bvc3Q+KTogQmxvZ1Bvc3QgfCBudWxsIHtcbiAgICBjb25zdCBwb3N0cyA9IHRoaXMuZ2V0UG9zdHMoKTtcbiAgICBjb25zdCBpbmRleCA9IHBvc3RzLmZpbmRJbmRleCgocCkgPT4gcC5pZCA9PT0gaWQpO1xuICAgIGlmIChpbmRleCA9PT0gLTEpIHJldHVybiBudWxsO1xuICAgIHBvc3RzW2luZGV4XSA9IHsgLi4ucG9zdHNbaW5kZXhdLCAuLi51cGRhdGVzIH07XG4gICAgdGhpcy5zYXZlUG9zdHMocG9zdHMpO1xuICAgIHJldHVybiBwb3N0c1tpbmRleF07XG4gIH0sXG4gIGRlbGV0ZVBvc3QoaWQ6IHN0cmluZyk6IGJvb2xlYW4ge1xuICAgIGNvbnN0IHBvc3RzID0gdGhpcy5nZXRQb3N0cygpO1xuICAgIGNvbnN0IGZpbHRlcmVkID0gcG9zdHMuZmlsdGVyKChwKSA9PiBwLmlkICE9PSBpZCk7XG4gICAgaWYgKGZpbHRlcmVkLmxlbmd0aCA9PT0gcG9zdHMubGVuZ3RoKSByZXR1cm4gZmFsc2U7XG4gICAgdGhpcy5zYXZlUG9zdHMoZmlsdGVyZWQpO1xuICAgIHJldHVybiB0cnVlO1xuICB9LFxuICBsaWtlUG9zdChpZDogc3RyaW5nKTogbnVtYmVyIHtcbiAgICBjb25zdCBwb3N0cyA9IHRoaXMuZ2V0UG9zdHMoKTtcbiAgICBjb25zdCBwb3N0ID0gcG9zdHMuZmluZCgocCkgPT4gcC5pZCA9PT0gaWQpO1xuICAgIGlmICghcG9zdCkgcmV0dXJuIDA7XG4gICAgcG9zdC5saWtlcyArPSAxO1xuICAgIHRoaXMuc2F2ZVBvc3RzKHBvc3RzKTtcbiAgICByZXR1cm4gcG9zdC5saWtlcztcbiAgfSxcblxuICAvLyBBcHBsaWNhdGlvbnNcbiAgZ2V0QXBwbGljYXRpb25zKCk6IE1lbWJlcnNoaXBBcHBsaWNhdGlvbltdIHtcbiAgICByZXR1cm4gc2FmZUdldDxNZW1iZXJzaGlwQXBwbGljYXRpb25bXT4oU1RPUkFHRV9LRVlTLkFQUExJQ0FUSU9OUywgSU5JVElBTF9BUFBMSUNBVElPTlMpO1xuICB9LFxuICBzYXZlQXBwbGljYXRpb25zKGFwcHM6IE1lbWJlcnNoaXBBcHBsaWNhdGlvbltdKTogdm9pZCB7XG4gICAgc2FmZVNldChTVE9SQUdFX0tFWVMuQVBQTElDQVRJT05TLCBhcHBzKTtcbiAgfSxcbiAgYWRkQXBwbGljYXRpb24oYXBwOiBPbWl0PE1lbWJlcnNoaXBBcHBsaWNhdGlvbiwgJ2lkJyB8ICdzdGF0dXMnIHwgJ3N1Ym1pdHRlZEF0Jz4pOiBNZW1iZXJzaGlwQXBwbGljYXRpb24ge1xuICAgIGNvbnN0IGFwcHMgPSB0aGlzLmdldEFwcGxpY2F0aW9ucygpO1xuICAgIGNvbnN0IG5ld0FwcDogTWVtYmVyc2hpcEFwcGxpY2F0aW9uID0ge1xuICAgICAgLi4uYXBwLFxuICAgICAgaWQ6IGBhcHAtJHtEYXRlLm5vdygpfWAsXG4gICAgICBzdGF0dXM6ICdQZW5kaW5nJyxcbiAgICAgIHN1Ym1pdHRlZEF0OiBuZXcgRGF0ZSgpLnRvSVNPU3RyaW5nKCksXG4gICAgfTtcbiAgICBhcHBzLnVuc2hpZnQobmV3QXBwKTtcbiAgICB0aGlzLnNhdmVBcHBsaWNhdGlvbnMoYXBwcyk7XG4gICAgcmV0dXJuIG5ld0FwcDtcbiAgfSxcbiAgdXBkYXRlQXBwbGljYXRpb25TdGF0dXMoaWQ6IHN0cmluZywgc3RhdHVzOiBNZW1iZXJzaGlwQXBwbGljYXRpb25bJ3N0YXR1cyddLCBhZG1pbk5vdGVzPzogc3RyaW5nKTogYm9vbGVhbiB7XG4gICAgY29uc3QgYXBwcyA9IHRoaXMuZ2V0QXBwbGljYXRpb25zKCk7XG4gICAgY29uc3QgYXBwID0gYXBwcy5maW5kKChhKSA9PiBhLmlkID09PSBpZCk7XG4gICAgaWYgKCFhcHApIHJldHVybiBmYWxzZTtcbiAgICBhcHAuc3RhdHVzID0gc3RhdHVzO1xuICAgIGlmIChhZG1pbk5vdGVzICE9PSB1bmRlZmluZWQpIHtcbiAgICAgIGFwcC5hZG1pbk5vdGVzID0gYWRtaW5Ob3RlcztcbiAgICB9XG4gICAgdGhpcy5zYXZlQXBwbGljYXRpb25zKGFwcHMpO1xuICAgIHJldHVybiB0cnVlO1xuICB9LFxuICBkZWxldGVBcHBsaWNhdGlvbihpZDogc3RyaW5nKTogYm9vbGVhbiB7XG4gICAgY29uc3QgYXBwcyA9IHRoaXMuZ2V0QXBwbGljYXRpb25zKCk7XG4gICAgY29uc3QgZmlsdGVyZWQgPSBhcHBzLmZpbHRlcigoYSkgPT4gYS5pZCAhPT0gaWQpO1xuICAgIGlmIChmaWx0ZXJlZC5sZW5ndGggPT09IGFwcHMubGVuZ3RoKSByZXR1cm4gZmFsc2U7XG4gICAgdGhpcy5zYXZlQXBwbGljYXRpb25zKGZpbHRlcmVkKTtcbiAgICByZXR1cm4gdHJ1ZTtcbiAgfSxcblxuICAvLyBFeHBvcnQgZnVsbCBkYXRhYmFzZSBzZWVkIGZvciBNb25nb0RCIC8gTmV4dC5qc1xuICBleHBvcnREYXRhYmFzZVNlZWQoKSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIGNsdWJJbmZvOiB0aGlzLmdldENsdWJJbmZvKCksXG4gICAgICBtZW1iZXJzOiB0aGlzLmdldE1lbWJlcnMoKSxcbiAgICAgIGV2ZW50czogdGhpcy5nZXRFdmVudHMoKSxcbiAgICAgIHBvc3RzOiB0aGlzLmdldFBvc3RzKCksXG4gICAgICBhcHBsaWNhdGlvbnM6IHRoaXMuZ2V0QXBwbGljYXRpb25zKCksXG4gICAgICBleHBvcnRlZEF0OiBuZXcgRGF0ZSgpLnRvSVNPU3RyaW5nKCksXG4gICAgICBzY2hlbWFWZXJzaW9uOiAnMS4wLjAnLFxuICAgIH07XG4gIH0sXG5cbiAgLy8gUmVzZXQgdG8gaW5pdGlhbCBkZWZhdWx0c1xuICByZXNldFRvRGVmYXVsdHMoKSB7XG4gICAgbG9jYWxTdG9yYWdlLnJlbW92ZUl0ZW0oU1RPUkFHRV9LRVlTLklORk8pO1xuICAgIGxvY2FsU3RvcmFnZS5yZW1vdmVJdGVtKFNUT1JBR0VfS0VZUy5NRU1CRVJTKTtcbiAgICBsb2NhbFN0b3JhZ2UucmVtb3ZlSXRlbShTVE9SQUdFX0tFWVMuRVZFTlRTKTtcbiAgICBsb2NhbFN0b3JhZ2UucmVtb3ZlSXRlbShTVE9SQUdFX0tFWVMuUE9TVFMpO1xuICAgIGxvY2FsU3RvcmFnZS5yZW1vdmVJdGVtKFNUT1JBR0VfS0VZUy5BUFBMSUNBVElPTlMpO1xuICB9LFxufTtcbiJdfQ==
+function safeGet<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
+  } catch (e) {
+    console.warn(`Error reading ${key} from storage:`, e);
+    return fallback;
+  }
+}
+
+function safeSet<T>(key: string, value: T): void {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.error(`Error saving ${key} to storage:`, e);
+  }
+}
+
+export const StorageService = {
+  // Club Info
+  getClubInfo(): ClubInfo {
+    return safeGet<ClubInfo>(STORAGE_KEYS.INFO, INITIAL_CLUB_INFO);
+  },
+  saveClubInfo(info: ClubInfo): void {
+    safeSet(STORAGE_KEYS.INFO, info);
+  },
+
+  // Members
+  getMembers(): ClubMember[] {
+    return safeGet<ClubMember[]>(STORAGE_KEYS.MEMBERS, INITIAL_MEMBERS);
+  },
+  saveMembers(members: ClubMember[]): void {
+    safeSet(STORAGE_KEYS.MEMBERS, members);
+  },
+  addMember(member: Omit<ClubMember, 'id' | 'joinedDate'>): ClubMember {
+    const members = this.getMembers();
+    const newMember: ClubMember = {
+      ...member,
+      id: `mem-${Date.now()}`,
+      joinedDate: new Date().toISOString().split('T')[0],
+    };
+    members.unshift(newMember);
+    this.saveMembers(members);
+    return newMember;
+  },
+  updateMember(id: string, updates: Partial<ClubMember>): ClubMember | null {
+    const members = this.getMembers();
+    const index = members.findIndex((m) => m.id === id);
+    if (index === -1) return null;
+    members[index] = { ...members[index], ...updates };
+    this.saveMembers(members);
+    return members[index];
+  },
+  deleteMember(id: string): boolean {
+    const members = this.getMembers();
+    const filtered = members.filter((m) => m.id !== id);
+    if (filtered.length === members.length) return false;
+    this.saveMembers(filtered);
+    return true;
+  },
+
+  // Events
+  getEvents(): ClubEvent[] {
+    return safeGet<ClubEvent[]>(STORAGE_KEYS.EVENTS, INITIAL_EVENTS);
+  },
+  saveEvents(events: ClubEvent[]): void {
+    safeSet(STORAGE_KEYS.EVENTS, events);
+  },
+  addEvent(event: Omit<ClubEvent, 'id' | 'rsvps'>): ClubEvent {
+    const events = this.getEvents();
+    const newEvent: ClubEvent = {
+      ...event,
+      id: `ev-${Date.now()}`,
+      rsvps: [],
+    };
+    events.unshift(newEvent);
+    this.saveEvents(events);
+    return newEvent;
+  },
+  updateEvent(id: string, updates: Partial<ClubEvent>): ClubEvent | null {
+    const events = this.getEvents();
+    const index = events.findIndex((e) => e.id === id);
+    if (index === -1) return null;
+    events[index] = { ...events[index], ...updates };
+    this.saveEvents(events);
+    return events[index];
+  },
+  deleteEvent(id: string): boolean {
+    const events = this.getEvents();
+    const filtered = events.filter((e) => e.id !== id);
+    if (filtered.length === events.length) return false;
+    this.saveEvents(filtered);
+    return true;
+  },
+  toggleRsvp(eventId: string, email: string): { success: boolean; rsvped: boolean; count: number } {
+    const events = this.getEvents();
+    const ev = events.find((e) => e.id === eventId);
+    if (!ev) return { success: false, rsvped: false, count: 0 };
+
+    const emailTrimmed = email.trim().toLowerCase();
+    const hasRsvped = ev.rsvps.includes(emailTrimmed);
+
+    if (hasRsvped) {
+      ev.rsvps = ev.rsvps.filter((e) => e !== emailTrimmed);
+    } else {
+      if (ev.rsvps.length >= ev.capacity) {
+        return { success: false, rsvped: false, count: ev.rsvps.length };
+      }
+      ev.rsvps.push(emailTrimmed);
+    }
+    this.saveEvents(events);
+    return { success: true, rsvped: !hasRsvped, count: ev.rsvps.length };
+  },
+
+  // Blog Posts
+  getPosts(): BlogPost[] {
+    return safeGet<BlogPost[]>(STORAGE_KEYS.POSTS, INITIAL_POSTS);
+  },
+  savePosts(posts: BlogPost[]): void {
+    safeSet(STORAGE_KEYS.POSTS, posts);
+  },
+  addPost(post: Omit<BlogPost, 'id' | 'likes' | 'publishedAt'>): BlogPost {
+    const posts = this.getPosts();
+    const newPost: BlogPost = {
+      ...post,
+      id: `post-${Date.now()}`,
+      likes: 0,
+      publishedAt: new Date().toISOString().split('T')[0],
+    };
+    posts.unshift(newPost);
+    this.savePosts(posts);
+    return newPost;
+  },
+  updatePost(id: string, updates: Partial<BlogPost>): BlogPost | null {
+    const posts = this.getPosts();
+    const index = posts.findIndex((p) => p.id === id);
+    if (index === -1) return null;
+    posts[index] = { ...posts[index], ...updates };
+    this.savePosts(posts);
+    return posts[index];
+  },
+  deletePost(id: string): boolean {
+    const posts = this.getPosts();
+    const filtered = posts.filter((p) => p.id !== id);
+    if (filtered.length === posts.length) return false;
+    this.savePosts(filtered);
+    return true;
+  },
+  likePost(id: string): number {
+    const posts = this.getPosts();
+    const post = posts.find((p) => p.id === id);
+    if (!post) return 0;
+    post.likes += 1;
+    this.savePosts(posts);
+    return post.likes;
+  },
+
+  // Applications
+  getApplications(): MembershipApplication[] {
+    return safeGet<MembershipApplication[]>(STORAGE_KEYS.APPLICATIONS, INITIAL_APPLICATIONS);
+  },
+  saveApplications(apps: MembershipApplication[]): void {
+    safeSet(STORAGE_KEYS.APPLICATIONS, apps);
+  },
+  addApplication(app: Omit<MembershipApplication, 'id' | 'status' | 'submittedAt'>): MembershipApplication {
+    const apps = this.getApplications();
+    const newApp: MembershipApplication = {
+      ...app,
+      id: `app-${Date.now()}`,
+      status: 'Pending',
+      submittedAt: new Date().toISOString(),
+    };
+    apps.unshift(newApp);
+    this.saveApplications(apps);
+    return newApp;
+  },
+  updateApplicationStatus(id: string, status: MembershipApplication['status'], adminNotes?: string): boolean {
+    const apps = this.getApplications();
+    const app = apps.find((a) => a.id === id);
+    if (!app) return false;
+    app.status = status;
+    if (adminNotes !== undefined) {
+      app.adminNotes = adminNotes;
+    }
+    this.saveApplications(apps);
+    return true;
+  },
+  deleteApplication(id: string): boolean {
+    const apps = this.getApplications();
+    const filtered = apps.filter((a) => a.id !== id);
+    if (filtered.length === apps.length) return false;
+    this.saveApplications(filtered);
+    return true;
+  },
+
+  // Export full database seed for MongoDB / Next.js
+  exportDatabaseSeed() {
+    return {
+      clubInfo: this.getClubInfo(),
+      members: this.getMembers(),
+      events: this.getEvents(),
+      posts: this.getPosts(),
+      applications: this.getApplications(),
+      exportedAt: new Date().toISOString(),
+      schemaVersion: '1.0.0',
+    };
+  },
+
+  // Reset to initial defaults
+  resetToDefaults() {
+    localStorage.removeItem(STORAGE_KEYS.INFO);
+    localStorage.removeItem(STORAGE_KEYS.MEMBERS);
+    localStorage.removeItem(STORAGE_KEYS.EVENTS);
+    localStorage.removeItem(STORAGE_KEYS.POSTS);
+    localStorage.removeItem(STORAGE_KEYS.APPLICATIONS);
+  },
+};
