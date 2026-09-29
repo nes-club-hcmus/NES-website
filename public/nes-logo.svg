@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Metallic gradient for outer and inner borders -->
+    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8e5dc"/>
+      <stop offset="25%" stop-color="#c8c3b4"/>
+      <stop offset="50%" stop-color="#aba492"/>
+      <stop offset="75%" stop-color="#dfdcd3"/>
+      <stop offset="100%" stop-color="#9d9683"/>
+    </linearGradient>
+
+    <!-- Brushed letter gradient -->
+    <linearGradient id="letterGrad" x1="0%" y1="0%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#f5f3ec"/>
+      <stop offset="30%" stop-color="#cfc9b8"/>
+      <stop offset="70%" stop-color="#9f9886"/>
+      <stop offset="100%" stop-color="#dfdacd"/>
+    </linearGradient>
+
+    <!-- Carbon mesh dark pattern background -->
+    <pattern id="carbonMesh" width="8" height="8" patternUnits="userSpaceOnUse">
+      <rect width="8" height="8" fill="#141414"/>
+      <circle cx="2" cy="2" r="1.2" fill="#202020"/>
+      <circle cx="6" cy="6" r="1.2" fill="#202020"/>
+      <circle cx="2" cy="6" r="0.8" fill="#0d0d0d"/>
+      <circle cx="6" cy="2" r="0.8" fill="#0d0d0d"/>
+    </pattern>
+    
+    <filter id="shadowDrop" x="-10%" y="-10%" width="125%" height="125%">
+      <feDropShadow dx="3" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- Background base -->
+  <rect width="500" height="500" fill="#0a0a0a"/>
+
+  <!-- Carbon textured square panel -->
+  <rect x="18" y="18" width="464" height="464" fill="url(#carbonMesh)"/>
+
+  <!-- Outer Metallic Framing Border -->
+  <rect x="20" y="20" width="460" height="460" fill="none" stroke="url(#metalGrad)" stroke-width="24"/>
+  <rect x="33" y="33" width="434" height="434" fill="none" stroke="#26231e" stroke-width="2"/>
+
+  <!-- Main Monogram Group: NES Interlocking Graphic -->
+  <g filter="url(#shadowDrop)">
+    <!-- 'N' Left Stem & Diagonal -->
+    <!-- Left upright stem of N -->
+    <rect x="85" y="70" width="44" height="358" fill="url(#letterGrad)"/>
+
+    <!-- Bottom curve connection of E / N loop -->
+    <path d="M 85 350 C 85 435, 235 435, 248 350 C 248 270, 135 270, 135 348" fill="none" stroke="url(#letterGrad)" stroke-width="44" stroke-linecap="square"/>
+    
+    <!-- Central Diagonal / S Curve -->
+    <path d="M 125 105 L 315 425" stroke="url(#metalGrad)" stroke-width="44" stroke-linecap="square"/>
+
+    <!-- 'S' Upper Loop -->
+    <path d="M 215 155 C 215 65, 360 65, 360 185 C 360 255, 235 250, 235 315" fill="none" stroke="url(#letterGrad)" stroke-width="44" stroke-linecap="round"/>
+
+    <!-- Vertical Bar on right of N / S closure -->
+    <rect x="310" y="245" width="44" height="183" fill="url(#letterGrad)"/>
+    
+    <!-- Crossbar of E -->
+    <rect x="135" y="325" width="110" height="40" fill="url(#letterGrad)"/>
+  </g>
+
+  <!-- Vertical text on right side: "CLB học thuật NES" -->
+  <g transform="translate(388, 428) rotate(-90)">
+    <text x="0" y="0" 
+          font-family="'Plus Jakarta Sans', 'Cabinet Grotesk', -apple-system, sans-serif" 
+          font-size="28" 
+          font-weight="600" 
+          letter-spacing="5" 
+          fill="url(#letterGrad)">
+      CLB học thuật NES
+    </text>
+  </g>
+</svg>
