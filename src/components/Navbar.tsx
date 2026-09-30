@@ -48,7 +48,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate }) => 
           {/* Metallic NES Logo Emblem */}
           <div className="w-10 h-10 rounded-lg bg-neutral-950 p-0.5 border border-neutral-800 shadow-xs flex items-center justify-center shrink-0 overflow-hidden group-hover:scale-105 transition-transform">
             <img
-              src="/nes-logo.svg"
+              src="/nes-logo-v2.jpg"
               alt="Logo CLB Học thuật NES HCMUS"
               className="w-full h-full object-contain"
             />

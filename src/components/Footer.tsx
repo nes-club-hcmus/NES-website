@@ -20,7 +20,7 @@ export const Footer: React.FC<FooterProps> = ({ clubInfo, onNavClick }) => {
           <div className="md:col-span-6 space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-neutral-900 p-0.5 border border-neutral-700 shrink-0 flex items-center justify-center">
-                <img src="/nes-logo.svg" alt="NES Logo" className="w-full h-full object-contain" />
+                <img src="/nes-logo-v2.jpg" alt="NES Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <div className="text-base font-bold text-white tracking-tight">

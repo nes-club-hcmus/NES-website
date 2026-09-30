@@ -85,7 +85,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
               <div className="relative aspect-square w-full rounded-xl bg-neutral-900 overflow-hidden border border-neutral-800/80 flex items-center justify-center p-4">
                 <img
-                  src="/nes-logo.svg"
+                  src="/nes-logo-v2.jpg"
                   alt="NES Club Logo"
                   className="w-full h-full object-contain filter drop-shadow-md group-hover:scale-102 transition-transform duration-300"
                 />
