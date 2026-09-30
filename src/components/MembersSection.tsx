@@ -1,32 +1,22 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Github, Linkedin, Mail } from 'lucide-react';
-import { ClubMember, Track } from '../types';
-import { Language, translations } from '../data/translations';
+import { Search, Mail, ExternalLink, Sparkles } from 'lucide-react';
+import { ClubMember } from '../types';
 
 interface MembersSectionProps {
   members: ClubMember[];
-  language: Language;
-  onManageMembers: () => void;
   onJoinClick: () => void;
 }
 
-export const MembersSection: React.FC<MembersSectionProps> = ({
-  members,
-  language,
-  onManageMembers,
-  onJoinClick,
-}) => {
+export const MembersSection: React.FC<MembersSectionProps> = ({ members, onJoinClick }) => {
   const [selectedTrack, setSelectedTrack] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const t = translations[language];
 
   const tracks: { key: string; label: string }[] = [
-    { key: 'All', label: t.members.all },
-    { key: 'Software & AI', label: 'Software & AI' },
-    { key: 'Product & UI/UX', label: 'Product & UI/UX' },
-    { key: 'Hardware & Robotics', label: 'Hardware & Robotics' },
-    { key: 'Community & Ops', label: language === 'vi' ? 'Học thuật & Ops' : 'Academic & Ops' },
-    { key: 'Alumni', label: language === 'vi' ? 'Cựu thành viên' : 'Alumni' },
+    { key: 'All', label: 'Tất cả' },
+    { key: 'Học thuật', label: 'Mảng Học thuật' },
+    { key: 'Điện tử', label: 'Mảng Điện tử' },
+    { key: 'Truyền thông & Sự kiện', label: 'Truyền thông & Sự kiện' },
+    { key: 'Alumni', label: 'Cựu thành viên' },
   ];
 
   const filteredMembers = useMemo(() => {
@@ -35,7 +25,7 @@ export const MembersSection: React.FC<MembersSectionProps> = ({
         selectedTrack === 'All'
           ? true
           : selectedTrack === 'Alumni'
-          ? member.status === 'Alumni' || member.role === 'Alumni'
+          ? member.status === 'Alumni' || member.role.includes('Cựu') || member.role.includes('Cố vấn')
           : member.track === selectedTrack;
 
       const q = searchQuery.toLowerCase().trim();
@@ -51,49 +41,44 @@ export const MembersSection: React.FC<MembersSectionProps> = ({
   }, [members, selectedTrack, searchQuery]);
 
   return (
-    <section id="members" className="py-16 md:py-20 border-b border-neutral-200">
+    <section id="members" className="py-16 md:py-24 border-b border-neutral-200 bg-[#fafaf9]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
-            <div className="text-xs font-semibold text-neutral-500 uppercase tracking-wider mb-2 font-mono">
-              {t.members.sectionNum}
+            <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2 font-mono flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+              03. Đội ngũ &amp; Ban điều hành
             </div>
-            <h2 className="text-3xl font-bold tracking-tight text-neutral-950 sm:text-4xl">
-              {t.members.title}
+            <h2 className="text-3xl font-extrabold tracking-tight text-neutral-950 sm:text-4xl">
+              Ban Chủ nhiệm &amp; Thành viên nòng cốt
             </h2>
-            <p className="mt-2 text-neutral-600 text-sm sm:text-base">
-              {t.members.subtitle}
+            <p className="mt-2 text-neutral-600 text-sm sm:text-base max-w-2xl">
+              Những sinh viên nhiệt huyết, tài năng thuộc Khoa Vật lý – Vật lý kỹ thuật trường ĐH Khoa học Tự nhiên đang trực tiếp điều hành và dẫn dắt các hoạt động của CLB NES.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <button
-              onClick={onManageMembers}
-              className="px-3.5 py-2 text-xs font-medium text-neutral-800 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded-md transition-colors whitespace-nowrap"
-            >
-              {t.members.crudBtn}
-            </button>
-            <button
               onClick={onJoinClick}
-              className="px-3.5 py-2 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded-md transition-colors whitespace-nowrap"
+              className="px-4 py-2.5 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-lg transition-all shadow-xs whitespace-nowrap cursor-pointer"
             >
-              {t.members.joinBtn}
+              Ứng tuyển gia nhập đội ngũ
             </button>
           </div>
         </div>
 
         {/* Filters and Search Bar */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-neutral-100/90 rounded-lg border border-neutral-200">
+          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white rounded-xl border border-neutral-200 shadow-2xs">
             {tracks.map((track) => (
               <button
                 key={track.key}
                 onClick={() => setSelectedTrack(track.key)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all whitespace-nowrap cursor-pointer ${
                   selectedTrack === track.key
-                    ? 'bg-white text-neutral-900 shadow-xs font-semibold'
-                    : 'text-neutral-600 hover:text-neutral-900'
+                    ? 'bg-neutral-900 text-white shadow-xs font-semibold'
+                    : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'
                 }`}
               >
                 {track.label}
@@ -102,30 +87,30 @@ export const MembersSection: React.FC<MembersSectionProps> = ({
           </div>
 
           {/* Search Input */}
-          <div className="relative min-w-[240px]">
-            <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <div className="relative min-w-[260px]">
+            <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t.members.searchPlaceholder}
-              className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-neutral-300 rounded-md focus:outline-none focus:ring-1 focus:ring-neutral-800 text-neutral-900"
+              placeholder="Tìm theo tên, vai trò, kỹ năng..."
+              className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-800 text-neutral-900 shadow-2xs"
             />
           </div>
         </div>
 
         {/* Member Grid */}
         {filteredMembers.length === 0 ? (
-          <div className="text-center py-12 bg-white border border-neutral-200 rounded-lg">
-            <p className="text-sm text-neutral-500">{t.members.noResult}</p>
+          <div className="text-center py-12 bg-white border border-neutral-200 rounded-xl">
+            <p className="text-sm text-neutral-500">Không tìm thấy thành viên phù hợp với từ khóa.</p>
             <button
               onClick={() => {
                 setSelectedTrack('All');
                 setSearchQuery('');
               }}
-              className="mt-3 text-xs text-neutral-900 underline hover:text-neutral-700"
+              className="mt-3 text-xs text-neutral-900 underline font-medium hover:text-neutral-700 cursor-pointer"
             >
-              {t.members.resetFilter}
+              Đặt lại bộ lọc
             </button>
           </div>
         ) : (
@@ -133,30 +118,30 @@ export const MembersSection: React.FC<MembersSectionProps> = ({
             {filteredMembers.map((member) => (
               <div
                 key={member.id}
-                className="bg-white border border-neutral-200 rounded-lg p-6 flex flex-col justify-between hover:border-neutral-300 transition-colors"
+                className="bg-white border border-neutral-200 rounded-xl p-6 flex flex-col justify-between hover:shadow-md hover:border-neutral-300 transition-all duration-200"
               >
                 <div>
                   {/* Top: Avatar & Name */}
                   <div className="flex items-start gap-4 mb-4">
                     <div
-                      className={`w-12 h-12 rounded-lg bg-gradient-to-br ${member.avatarColor} text-white flex items-center justify-center font-bold text-base shrink-0 shadow-xs`}
+                      className={`w-13 h-13 rounded-xl bg-gradient-to-br ${member.avatarColor} text-white flex items-center justify-center font-bold text-base shrink-0 shadow-sm`}
                     >
                       {member.name
                         .split(' ')
                         .map((n) => n[0])
+                        .slice(-2)
                         .join('')}
                     </div>
                     <div>
-                      <h3 className="text-base font-semibold text-neutral-950 leading-tight">
+                      <h3 className="text-base font-bold text-neutral-950 leading-tight">
                         {member.name}
                       </h3>
-                      {/* Zero-Pill Clean Unboxed Metadata */}
                       <div className="flex items-center gap-1.5 text-xs text-neutral-500 mt-1 flex-wrap">
-                        <span className="font-medium text-neutral-700">{member.role}</span>
-                        <span aria-hidden="true">·</span>
-                        <span>{member.track}</span>
-                        <span aria-hidden="true">·</span>
-                        <span className="font-mono tabular-nums">{t.members.classOf} {member.graduationYear}</span>
+                        <span className="font-semibold text-blue-800 bg-blue-50 px-2 py-0.5 rounded text-[11px]">
+                          {member.role}
+                        </span>
+                        <span aria-hidden="true" className="text-neutral-300">·</span>
+                        <span className="text-neutral-600 font-medium">{member.track}</span>
                       </div>
                     </div>
                   </div>
@@ -168,56 +153,45 @@ export const MembersSection: React.FC<MembersSectionProps> = ({
                 </div>
 
                 <div>
-                  {/* Skills: Clean unboxed list */}
+                  {/* Skills / Specializations */}
                   <div className="text-xs text-neutral-500 mb-4 pt-3 border-t border-neutral-100">
-                    <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-1.5">
-                      {t.members.focusAreas}
+                    <div className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-2 font-mono">
+                      Chuyên môn nòng cốt
                     </div>
-                    <div className="flex flex-wrap gap-1.5 text-neutral-700">
-                      {member.skills.map((skill, idx) => (
-                        <span key={skill} className="font-mono text-xs">
+                    <div className="flex flex-wrap gap-1.5">
+                      {member.skills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="px-2 py-0.5 bg-neutral-100 text-neutral-700 rounded text-[11px] font-medium"
+                        >
                           {skill}
-                          {idx < member.skills.length - 1 ? ' ·' : ''}
                         </span>
                       ))}
                     </div>
                   </div>
 
-                  {/* Links / Contact */}
+                  {/* Footer / Contact */}
                   <div className="flex items-center justify-between pt-3 border-t border-neutral-100 text-neutral-500 text-xs">
                     <span className="font-mono text-[11px] text-neutral-400">
-                      {member.status === 'Active' ? t.members.statusActive : member.status}
+                      Niên khóa: {member.graduationYear}
                     </span>
 
-                    <div className="flex items-center gap-3">
-                      {member.githubUrl && (
-                        <a
-                          href={member.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:text-neutral-900 transition-colors"
-                          title="GitHub Profile"
-                        >
-                          <Github className="w-4 h-4" />
-                        </a>
-                      )}
-                      {member.linkedinUrl && (
-                        <a
-                          href={member.linkedinUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:text-neutral-900 transition-colors"
-                          title="LinkedIn Profile"
-                        >
-                          <Linkedin className="w-4 h-4" />
-                        </a>
-                      )}
+                    <div className="flex items-center gap-2">
                       <a
                         href={`mailto:${member.email}`}
-                        className="hover:text-neutral-900 transition-colors"
+                        className="p-1.5 hover:text-neutral-950 hover:bg-neutral-100 rounded transition-colors"
                         title={member.email}
                       >
                         <Mail className="w-4 h-4" />
+                      </a>
+                      <a
+                        href="https://www.facebook.com/CLBNES"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                        title="Fanpage CLB NES"
+                      >
+                        <ExternalLink className="w-4 h-4" />
                       </a>
                     </div>
                   </div>

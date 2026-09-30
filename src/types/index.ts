@@ -1,16 +1,17 @@
-export type Track = 'Software & AI' | 'Product & UI/UX' | 'Hardware & Robotics' | 'Community & Ops';
+export type Track = 'Học thuật' | 'Điện tử' | 'Truyền thông & Sự kiện' | string;
 
 export type MemberRole =
-  | 'President'
-  | 'Vice President'
-  | 'Tech Lead'
-  | 'Design Lead'
-  | 'Outreach Lead'
-  | 'Event Coordinator'
-  | 'Core Member'
-  | 'Alumni';
+  | 'Chủ nhiệm CLB'
+  | 'Phó Chủ nhiệm'
+  | 'Trưởng ban Học thuật'
+  | 'Trưởng ban Điện tử'
+  | 'Trưởng ban Truyền thông'
+  | 'Thành viên nòng cốt'
+  | 'Cố vấn chuyên môn'
+  | 'Cựu thành viên'
+  | string;
 
-export type MemberStatus = 'Active' | 'On Leave' | 'Alumni';
+export type MemberStatus = 'Active' | 'On Leave' | 'Alumni' | string;
 
 export interface ClubMember {
   id: string;
@@ -24,12 +25,20 @@ export interface ClubMember {
   skills: string[];
   githubUrl?: string;
   linkedinUrl?: string;
+  facebookUrl?: string;
   status: MemberStatus;
   joinedDate: string;
   avatarColor: string;
 }
 
-export type EventCategory = 'Workshop' | 'Hackathon' | 'Tech Talk' | 'Social' | 'Project Demo';
+export type EventCategory =
+  | 'Hội thảo & Seminar'
+  | 'Workshop Thực hành'
+  | 'Chuỗi Ôn tập'
+  | 'Tọa đàm'
+  | 'Giao lưu & Ngoại khóa'
+  | string;
+
 export type EventStatus = 'Upcoming' | 'Past' | 'Cancelled';
 
 export interface ClubEvent {
@@ -43,13 +52,18 @@ export interface ClubEvent {
   isOnline: boolean;
   category: EventCategory;
   capacity: number;
-  rsvps: string[]; // List of user emails who RSVP'd
+  rsvps: string[]; // Danh sách email đăng ký tham dự
   speakerName?: string;
   speakerRole?: string;
   status: EventStatus;
 }
 
-export type BlogCategory = 'Tutorial' | 'Project Showcase' | 'Career & Advice' | 'Event Recap';
+export type BlogCategory =
+  | 'Vật lý & Lý thuyết'
+  | 'Kỹ thuật Điện tử'
+  | 'Kinh nghiệm Học tập'
+  | 'Đời sống CLB'
+  | string;
 
 export interface BlogPost {
   id: string;
@@ -66,7 +80,7 @@ export interface BlogPost {
   isPublished: boolean;
 }
 
-export type YearOfStudy = 'Freshman' | 'Sophomore' | 'Junior' | 'Senior' | 'Graduate';
+export type YearOfStudy = 'Năm nhất' | 'Năm hai' | 'Năm ba' | 'Năm tư' | 'Cao học' | string;
 export type ApplicationStatus = 'Pending' | 'Interview' | 'Accepted' | 'Archived';
 
 export interface MembershipApplication {
@@ -76,8 +90,8 @@ export interface MembershipApplication {
   studentId: string;
   major: string;
   yearOfStudy: YearOfStudy;
-  tracks: Track[];
-  experienceLevel: 'Beginner' | 'Intermediate' | 'Advanced';
+  tracks: string[];
+  experienceLevel: 'Mới bắt đầu' | 'Khá' | 'Nâng cao' | string;
   motivation: string;
   portfolioUrl?: string;
   status: ApplicationStatus;
@@ -85,22 +99,39 @@ export interface MembershipApplication {
   adminNotes?: string;
 }
 
+export interface ScientistFigure {
+  letter: 'N' | 'E' | 'S';
+  name: string;
+  field: string;
+  contribution: string;
+}
+
 export interface ClubInfo {
   name: string;
   shortName: string;
-  nameVi: string;
-  shortNameVi: string;
-  tagline: string;
-  taglineVi?: string;
+  faculty: string;
   university: string;
-  universityVi?: string;
+  tagline: string;
   establishedYear: number;
   roomNumber: string;
   emailContact: string;
-  discordUrl: string;
-  githubOrg: string;
+  facebookUrl: string;
+  discordUrl?: string;
+  githubOrg?: string;
   mission: string;
-  missionVi?: string;
+  historyAndMeaning: {
+    title: string;
+    description: string;
+    figures: ScientistFigure[];
+  };
+  twoPillars: {
+    title: string;
+    slug: string;
+    badge: string;
+    summary: string;
+    description: string;
+    activities: string[];
+  }[];
   stats: {
     activeMembers: number;
     eventsHosted: number;

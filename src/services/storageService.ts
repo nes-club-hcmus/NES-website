@@ -14,12 +14,30 @@ import {
 } from '../data/initialData';
 
 const STORAGE_KEYS = {
+  VERSION: 'nes_storage_v2_hcmus',
   INFO: 'uniclub_info',
   MEMBERS: 'uniclub_members',
   EVENTS: 'uniclub_events',
   POSTS: 'uniclub_posts',
   APPLICATIONS: 'uniclub_applications',
 };
+
+// Auto-migrate if old dummy storage exists
+try {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    const currentVer = localStorage.getItem(STORAGE_KEYS.VERSION);
+    if (currentVer !== '2.0.0') {
+      localStorage.removeItem(STORAGE_KEYS.INFO);
+      localStorage.removeItem(STORAGE_KEYS.MEMBERS);
+      localStorage.removeItem(STORAGE_KEYS.EVENTS);
+      localStorage.removeItem(STORAGE_KEYS.POSTS);
+      localStorage.removeItem(STORAGE_KEYS.APPLICATIONS);
+      localStorage.setItem(STORAGE_KEYS.VERSION, '2.0.0');
+    }
+  }
+} catch (e) {
+  console.warn('Storage migration notice:', e);
+}
 
 function safeGet<T>(key: string, fallback: T): T {
   try {

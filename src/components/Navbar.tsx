@@ -1,60 +1,55 @@
-import React, { useState } from 'react';
-import { Menu, X, Terminal, ExternalLink, Github, Globe } from 'lucide-react';
-import { Language, translations } from '../data/translations';
+import React, { useState, useEffect } from 'react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 
 interface NavbarProps {
   activeSection: string;
-  setActiveSection: (section: string) => void;
-  onOpenBlueprint: () => void;
-  onOpenGitExport: () => void;
-  pendingApplicationsCount: number;
-  language: Language;
-  onLanguageChange: (lang: Language) => void;
+  onNavigate: (sectionId: string) => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  activeSection,
-  setActiveSection,
-  onOpenBlueprint,
-  onOpenGitExport,
-  pendingApplicationsCount,
-  language,
-  onLanguageChange,
-}) => {
+export const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const t = translations[language];
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navItems = [
-    { id: 'about', label: t.nav.about },
-    { id: 'members', label: t.nav.members },
-    { id: 'events', label: t.nav.events },
-    { id: 'blog', label: t.nav.blog },
-    { id: 'join', label: t.nav.join },
-    {
-      id: 'dashboard',
-      label: t.nav.dashboard,
-      badge: pendingApplicationsCount > 0 ? pendingApplicationsCount : undefined,
-    },
+    { id: 'about', label: 'Về NES & Ý nghĩa' },
+    { id: 'tracks', label: 'Mảng hoạt động' },
+    { id: 'events', label: 'Sự kiện & Workshop' },
+    { id: 'members', label: 'Ban Chủ nhiệm' },
+    { id: 'blog', label: 'Bài viết học thuật' },
   ];
 
   const handleNavClick = (id: string) => {
-    setActiveSection(id);
+    onNavigate(id);
     setMobileMenuOpen(false);
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#fafaf9]/95 backdrop-blur-md border-b border-neutral-200">
+    <header
+      className={`sticky top-0 z-40 transition-all duration-200 ${
+        isScrolled
+          ? 'bg-[#fafaf9]/95 backdrop-blur-md shadow-xs border-b border-neutral-200'
+          : 'bg-[#fafaf9]/80 backdrop-blur-sm border-b border-neutral-200/80'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Zone 1: Logo and wordmark */}
+        {/* Logo and Club Brand */}
         <button
-          onClick={() => handleNavClick('about')}
+          onClick={() => handleNavClick('hero')}
           className="flex items-center gap-3 text-left group cursor-pointer focus:outline-none"
         >
-          {/* Real metallic logo emblem */}
-          <div className="w-9 h-9 rounded-md bg-neutral-950 p-0.5 border border-neutral-700 shadow-xs flex items-center justify-center shrink-0 overflow-hidden">
+          {/* Metallic NES Logo Emblem */}
+          <div className="w-10 h-10 rounded-lg bg-neutral-950 p-0.5 border border-neutral-800 shadow-xs flex items-center justify-center shrink-0 overflow-hidden group-hover:scale-105 transition-transform">
             <img
               src="/nes-logo.svg"
-              alt="NES HCMUS Logo"
+              alt="Logo CLB Học thuật NES HCMUS"
               className="w-full h-full object-contain"
             />
           </div>
@@ -62,20 +57,20 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5">
               <span className="text-base font-extrabold tracking-tight text-neutral-950 group-hover:text-neutral-700 transition-colors">
-                {language === 'vi' ? t.club.shortName : t.club.shortName}
+                CLB HỌC THUẬT NES
               </span>
-              <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 bg-neutral-200 text-neutral-800 rounded">
+              <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 bg-blue-100 text-blue-900 rounded">
                 HCMUS
               </span>
             </div>
             <span className="text-[11px] text-neutral-500 font-medium line-clamp-1">
-              {language === 'vi' ? t.club.longName : t.club.longName}
+              Khoa Vật lý – Vật lý Kỹ thuật, Trường ĐH KHTN
             </span>
           </div>
         </button>
 
-        {/* Zone 2: Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-6 text-xs sm:text-sm font-medium text-neutral-600">
+        {/* Center Desktop Navigation Links */}
+        <nav className="hidden lg:flex items-center gap-7 text-xs sm:text-sm font-medium text-neutral-600">
           {navItems.map((item) => {
             const isActive = activeSection === item.id;
             return (
@@ -86,12 +81,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   isActive ? 'text-neutral-950 font-semibold' : 'text-neutral-600'
                 }`}
               >
-                <span className="whitespace-nowrap">{item.label}</span>
-                {item.badge !== undefined && (
-                  <span className="ml-1.5 text-xs font-mono px-1.5 py-0.2 bg-neutral-900 text-white rounded text-[10px]">
-                    {item.badge}
-                  </span>
-                )}
+                <span>{item.label}</span>
                 {isActive && (
                   <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-neutral-900 rounded-full" />
                 )}
@@ -100,85 +90,30 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Zone 3: Actions + Language Switcher */}
-        <div className="hidden sm:flex items-center gap-2.5">
-          {/* Language Switcher Pill */}
-          <div className="flex items-center p-0.5 bg-neutral-100 rounded-md border border-neutral-200 text-xs font-mono">
-            <button
-              onClick={() => onLanguageChange('vi')}
-              className={`px-2 py-1 rounded transition-colors ${
-                language === 'vi'
-                  ? 'bg-white text-neutral-950 font-bold shadow-2xs'
-                  : 'text-neutral-500 hover:text-neutral-900'
-              }`}
-              title="Tiếng Việt (Vietnamese)"
-            >
-              🇻🇳 VI
-            </button>
-            <button
-              onClick={() => onLanguageChange('en')}
-              className={`px-2 py-1 rounded transition-colors ${
-                language === 'en'
-                  ? 'bg-white text-neutral-950 font-bold shadow-2xs'
-                  : 'text-neutral-500 hover:text-neutral-900'
-              }`}
-              title="English"
-            >
-              🇬🇧 EN
-            </button>
-          </div>
-
-          <button
-            onClick={onOpenGitExport}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-neutral-800 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-md transition-colors whitespace-nowrap shadow-2xs"
-            title="Download code and push to your own Git/GitHub project"
-          >
-            <Github className="w-3.5 h-3.5" />
-            <span>{t.nav.exportGit}</span>
-          </button>
-
-          <button
-            onClick={onOpenBlueprint}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded-md transition-colors whitespace-nowrap"
-            title="Next.js + MongoDB + Vercel Blueprint"
-          >
-            <Terminal className="w-3.5 h-3.5 text-neutral-600" />
-            <span>Next.js</span>
-          </button>
-
+        {/* Right Action: Apply CTA */}
+        <div className="hidden sm:flex items-center gap-3">
           <button
             onClick={() => handleNavClick('join')}
-            className="px-3.5 py-1.5 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-md shadow-xs transition-colors whitespace-nowrap"
+            className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-lg shadow-xs hover:shadow-md transition-all whitespace-nowrap cursor-pointer"
           >
-            {t.nav.applyNow}
+            <span>Gia nhập NES</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* Mobile menu toggle & quick language */}
-        <div className="flex items-center gap-1.5 lg:hidden">
-          <div className="flex items-center p-0.5 bg-neutral-100 rounded border border-neutral-200 text-[11px] font-mono">
-            <button
-              onClick={() => onLanguageChange('vi')}
-              className={`px-1.5 py-0.5 rounded ${
-                language === 'vi' ? 'bg-white text-neutral-950 font-bold' : 'text-neutral-500'
-              }`}
-            >
-              VI
-            </button>
-            <button
-              onClick={() => onLanguageChange('en')}
-              className={`px-1.5 py-0.5 rounded ${
-                language === 'en' ? 'bg-white text-neutral-950 font-bold' : 'text-neutral-500'
-              }`}
-            >
-              EN
-            </button>
-          </div>
+        {/* Mobile menu toggle */}
+        <div className="flex items-center gap-2 lg:hidden">
+          <button
+            onClick={() => handleNavClick('join')}
+            className="px-3 py-1.5 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-md transition-colors"
+          >
+            Gia nhập
+          </button>
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-1.5 text-neutral-700 hover:text-neutral-950 rounded-md"
-            aria-label="Toggle navigation"
+            aria-label="Mở menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -187,51 +122,27 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile nav dropdown */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-neutral-200 bg-[#fafaf9] px-4 pt-3 pb-5 space-y-2">
+        <div className="lg:hidden border-t border-neutral-200 bg-[#fafaf9] px-4 pt-3 pb-5 space-y-1 animate-fadeIn">
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              className={`w-full text-left px-3 py-2 text-sm font-medium rounded-md flex items-center justify-between ${
+              className={`w-full text-left px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                 activeSection === item.id
                   ? 'bg-neutral-200 text-neutral-950 font-semibold'
                   : 'text-neutral-700 hover:bg-neutral-100'
               }`}
             >
-              <span>{item.label}</span>
-              {item.badge !== undefined && (
-                <span className="text-xs font-mono px-1.5 py-0.5 bg-neutral-900 text-white rounded text-[10px]">
-                  {item.badge}
-                </span>
-              )}
+              {item.label}
             </button>
           ))}
-          <div className="pt-2 border-t border-neutral-200 flex flex-col gap-2">
-            <button
-              onClick={() => {
-                onOpenGitExport();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full flex items-center justify-center gap-2 py-2 text-xs font-semibold text-neutral-900 bg-white border border-neutral-300 rounded-md"
-            >
-              <Github className="w-4 h-4" />
-              {t.nav.exportGit}
-            </button>
-            <button
-              onClick={() => {
-                onOpenBlueprint();
-                setMobileMenuOpen(false);
-              }}
-              className="w-full flex items-center justify-center gap-2 py-2 text-xs font-medium text-neutral-800 bg-neutral-100 border border-neutral-300 rounded-md"
-            >
-              <Terminal className="w-4 h-4" />
-              {t.nav.blueprint}
-            </button>
+          <div className="pt-3 border-t border-neutral-200 mt-2">
             <button
               onClick={() => handleNavClick('join')}
-              className="w-full py-2 text-xs font-medium text-white bg-neutral-900 rounded-md text-center"
+              className="w-full py-2.5 text-xs font-semibold text-white bg-neutral-900 rounded-md text-center flex items-center justify-center gap-1.5"
             >
-              {t.nav.applyNow}
+              <span>Ứng tuyển gia nhập CLB NES</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
