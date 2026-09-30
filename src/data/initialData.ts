@@ -8,7 +8,7 @@ export const INITIAL_CLUB_INFO: ClubInfo = {
   tagline: 'Kết nối đam mê khoa học, khơi nguồn sáng tạo kỹ thuật và xây dựng cộng đồng học thuật vững mạnh.',
   establishedYear: 2018,
   roomNumber: 'Văn phòng Đoàn - Hội Khoa Vật lý - Vật lý Kỹ thuật, Cơ sở Nguyễn Văn Cừ, Quận 5',
-  emailContact: 'nes@phys.hcmus.edu.vn',
+  emailContact: 'clbnes@gmail.com',
   facebookUrl: 'https://www.facebook.com/CLBNES',
   discordUrl: 'https://discord.gg/nes-hcmus',
   githubOrg: 'https://github.com/nes-club-hcmus',

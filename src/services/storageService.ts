@@ -26,13 +26,13 @@ const STORAGE_KEYS = {
 try {
   if (typeof window !== 'undefined' && window.localStorage) {
     const currentVer = localStorage.getItem(STORAGE_KEYS.VERSION);
-    if (currentVer !== '2.0.0') {
+    if (currentVer !== '2.1.0') {
       localStorage.removeItem(STORAGE_KEYS.INFO);
       localStorage.removeItem(STORAGE_KEYS.MEMBERS);
       localStorage.removeItem(STORAGE_KEYS.EVENTS);
       localStorage.removeItem(STORAGE_KEYS.POSTS);
       localStorage.removeItem(STORAGE_KEYS.APPLICATIONS);
-      localStorage.setItem(STORAGE_KEYS.VERSION, '2.0.0');
+      localStorage.setItem(STORAGE_KEYS.VERSION, '2.1.0');
     }
   }
 } catch (e) {
