@@ -1,4 +1,4 @@
-import { ClubInfo, ClubMember, ClubEvent, BlogPost, MembershipApplication } from '../types';
+import { ClubInfo, ClubMember, ClubEvent, BlogPost, MembershipApplication, GalleryItem } from '../types';
 
 export const INITIAL_CLUB_INFO: ClubInfo = {
   name: 'Câu lạc bộ Học thuật NES',
@@ -6,8 +6,8 @@ export const INITIAL_CLUB_INFO: ClubInfo = {
   faculty: 'Khoa Vật lý – Vật lý kỹ thuật',
   university: 'Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM',
   tagline: 'Kết nối đam mê khoa học, khơi nguồn sáng tạo kỹ thuật và xây dựng cộng đồng học thuật vững mạnh.',
-  establishedYear: 2018,
-  roomNumber: 'Văn phòng Đoàn - Hội Khoa Vật lý - Vật lý Kỹ thuật, Cơ sở Nguyễn Văn Cừ, Quận 5',
+  establishedYear: 2008,
+  roomNumber: 'Phòng A315, Tòa nhà A, Cơ sở 2 (Khu phố 6, P. Linh Trung, TP. Thủ Đức, TP.HCM)',
   emailContact: 'clbnes@gmail.com',
   facebookUrl: 'https://www.facebook.com/CLBNES',
   discordUrl: 'https://discord.gg/nes-hcmus',
@@ -376,5 +376,56 @@ export const INITIAL_APPLICATIONS: MembershipApplication[] = [
     status: 'Interview',
     submittedAt: '2026-09-26T14:30:00Z',
     adminNotes: 'Học lực tốt, nhiệt huyết với hoạt động học thuật.',
+  },
+];
+
+export const INITIAL_GALLERY_ITEMS: GalleryItem[] = [
+  {
+    id: 'gal-1',
+    title: 'Thực hành Thiết kế & Hàn mạch in PCB tại Lab A315',
+    category: 'Thực hành & Chế tạo',
+    imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80',
+    date: 'Tháng 10/2026',
+    description: 'Sinh viên NES trực tiếp thao tác hàn linh kiện dán SMD, đo kiểm dao động ký và nạp code cho bo mạch vi điều khiển tự thiết kế.',
+  },
+  {
+    id: 'gal-2',
+    title: 'Hội thảo chuyên đề: Ứng dụng Cơ học Lượng tử trong Bán dẫn',
+    category: 'Học thuật & Seminar',
+    imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
+    date: 'Tháng 09/2026',
+    description: 'Buổi thuyết trình học thuật sôi nổi với sự tham gia của đông đảo sinh viên và các giảng viên Khoa Vật lý – Vật lý kỹ thuật.',
+  },
+  {
+    id: 'gal-3',
+    title: 'Thí nghiệm Quang học & Laser thực nghiệm',
+    category: 'Học thuật & Seminar',
+    imageUrl: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=1200&q=80',
+    date: 'Tháng 05/2026',
+    description: 'Nghiên cứu hiện tượng giao thoa, nhiễu xạ ánh sáng và đo đạc thông số quang học tại phòng thí nghiệm chuyên ngành.',
+  },
+  {
+    id: 'gal-4',
+    title: 'Phát triển Hệ thống cảm biến môi trường IoT & Robotics',
+    category: 'Thực hành & Chế tạo',
+    imageUrl: 'https://images.unsplash.com/photo-1581092335397-9583fe92d232?auto=format&fit=crop&w=1200&q=80',
+    date: 'Tháng 04/2026',
+    description: 'Nhóm nghiên cứu phần cứng NES hoàn thiện mô hình robot và trạm quan trắc vi khí hậu ứng dụng vi điều khiển ESP32.',
+  },
+  {
+    id: 'gal-5',
+    title: 'Chuỗi Lớp Ôn tập Trợ giảng trước Kỳ thi Học kỳ',
+    category: 'Học thuật & Seminar',
+    imageUrl: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80',
+    date: 'Tháng 12/2025',
+    description: 'Các anh chị khóa trên hướng dẫn giải đề thi mẫu môn Vật lý Đại cương 1 & 2 cho các bạn tân sinh viên.',
+  },
+  {
+    id: 'gal-6',
+    title: 'Dã ngoại Teambuilding & Gắn kết Đại gia đình NES',
+    category: 'Gắn kết & Ngoại khóa',
+    imageUrl: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
+    date: 'Tháng 11/2025',
+    description: 'Chuyến đi dã ngoại ngoại khóa thường niên kết nối các thế hệ thành viên, cựu thành viên và cộng tác viên của CLB.',
   },
 ];

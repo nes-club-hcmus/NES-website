@@ -209,10 +209,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ clubInfo }) => {
                   Địa điểm hoạt động
                 </div>
                 <div className="text-sm font-semibold text-neutral-900 mt-0.5">
-                  Khoa Vật lý – Vật lý Kỹ thuật
+                  Phòng A315, Cơ sở 2 (Linh Trung)
                 </div>
                 <div className="text-xs text-neutral-600 mt-0.5">
-                  227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP.HCM
+                  Khu phố 6, P. Linh Trung, TP. Thủ Đức, TP.HCM
                 </div>
               </div>
             </div>

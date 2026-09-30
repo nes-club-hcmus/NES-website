@@ -24,6 +24,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate }) => 
     { id: 'events', label: 'Sự kiện & Workshop' },
     { id: 'members', label: 'Ban Chủ nhiệm' },
     { id: 'blog', label: 'Bài viết học thuật' },
+    { id: 'gallery', label: 'Hình ảnh hoạt động' },
   ];
 
   const handleNavClick = (id: string) => {

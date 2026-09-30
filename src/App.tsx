@@ -10,9 +10,11 @@ import { AboutSection } from './components/AboutSection';
 import { MembersSection } from './components/MembersSection';
 import { EventsSection } from './components/EventsSection';
 import { BlogSection } from './components/BlogSection';
+import { GallerySection } from './components/GallerySection';
 import { JoinFormSection } from './components/JoinFormSection';
 import { Footer } from './components/Footer';
 import { StorageService } from './services/storageService';
+import { INITIAL_GALLERY_ITEMS } from './data/initialData';
 import {
   ClubInfo,
   ClubMember,
@@ -42,7 +44,7 @@ export default function App() {
 
   // IntersectionObserver to update active section on scroll
   useEffect(() => {
-    const sections = ['hero', 'about', 'tracks', 'events', 'members', 'blog', 'join'];
+    const sections = ['hero', 'about', 'tracks', 'events', 'members', 'blog', 'gallery', 'join'];
     const handleScroll = () => {
       const scrollPosition = window.scrollY + 200;
       for (const sectionId of sections) {
@@ -146,6 +148,10 @@ export default function App() {
         <BlogSection
           posts={posts}
           onLikePost={handleLikePost}
+        />
+
+        <GallerySection
+          items={INITIAL_GALLERY_ITEMS}
         />
 
         <JoinFormSection

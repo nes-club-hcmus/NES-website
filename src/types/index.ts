@@ -99,6 +99,15 @@ export interface MembershipApplication {
   adminNotes?: string;
 }
 
+export interface GalleryItem {
+  id: string;
+  title: string;
+  category: 'Học thuật & Seminar' | 'Thực hành & Chế tạo' | 'Gắn kết & Ngoại khóa' | string;
+  imageUrl: string;
+  date: string;
+  description: string;
+}
+
 export interface ScientistFigure {
   letter: 'N' | 'E' | 'S';
   name: string;

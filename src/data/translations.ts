@@ -7,8 +7,8 @@ export const translations = {
       shortName: 'CLB HT NES',
       university: 'Trường Đại học Khoa học Tự nhiên, ĐHQG-HCM (HCMUS)',
       tagline: 'Câu lạc bộ học thuật chuyên sâu về Kỹ thuật phần mềm, Trí tuệ nhân tạo, Hệ thống nhúng và Nghiên cứu khoa học sinh viên.',
-      establishedYear: 2018,
-      roomNumber: 'Phòng I.43, Toà nhà I, Cơ sở Nguyễn Văn Cừ, Quận 5',
+      establishedYear: 2008,
+      roomNumber: 'Phòng A315, Tòa nhà A, Cơ sở 2 (Linh Trung, TP. Thủ Đức, TP.HCM)',
       emailContact: 'clbnes@gmail.com',
       discordUrl: 'https://discord.gg/nes-hcmus',
       githubOrg: 'https://github.com/nes-hcmus',
@@ -180,7 +180,7 @@ export const translations = {
     footer: {
       affiliated: 'Trực thuộc Đoàn - Hội Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM.',
       address: 'Cơ sở 1: 227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP. Hồ Chí Minh.',
-      license: 'Bản quyền © 2018 - 2026 CLB Học thuật NES. Giấy phép mã nguồn mở MIT.',
+      license: 'Bản quyền © 2008 - 2026 CLB Học thuật NES. Giấy phép mã nguồn mở MIT.',
     },
   },
   en: {
@@ -189,8 +189,8 @@ export const translations = {
       shortName: 'NES HCMUS',
       university: 'Ho Chi Minh University of Science, VNU-HCM (HCMUS)',
       tagline: 'The premier student academic society for Software Engineering, AI, Embedded Systems, and Scientific Research.',
-      establishedYear: 2018,
-      roomNumber: 'Room I.43, Building I, Nguyen Van Cu Campus, District 5',
+      establishedYear: 2008,
+      roomNumber: 'Room A315, Building A, Campus 2 (Linh Trung, Thu Duc City)',
       emailContact: 'clbnes@gmail.com',
       discordUrl: 'https://discord.gg/nes-hcmus',
       githubOrg: 'https://github.com/nes-hcmus',
@@ -362,7 +362,7 @@ export const translations = {
     footer: {
       affiliated: 'Affiliated with the Youth Union - Student Association of Ho Chi Minh University of Science, VNU-HCM.',
       address: 'Campus 1: 227 Nguyen Van Cu Street, Ward 4, District 5, Ho Chi Minh City, Vietnam.',
-      license: 'Copyright © 2018 - 2026 NES Academic Club. Open-source under MIT License.',
+      license: 'Copyright © 2008 - 2026 NES Academic Club. Open-source under MIT License.',
     },
   },
 };

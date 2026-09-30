@@ -110,6 +110,14 @@ export const Footer: React.FC<FooterProps> = ({ clubInfo, onNavClick }) => {
               </li>
               <li>
                 <button
+                  onClick={() => onNavClick('gallery')}
+                  className="hover:text-white transition-colors cursor-pointer text-left"
+                >
+                  Khoảnh khắc &amp; Hoạt động
+                </button>
+              </li>
+              <li>
+                <button
                   onClick={() => onNavClick('join')}
                   className="hover:text-amber-400 transition-colors cursor-pointer font-semibold text-neutral-200 text-left"
                 >
@@ -125,12 +133,12 @@ export const Footer: React.FC<FooterProps> = ({ clubInfo, onNavClick }) => {
               Trụ sở &amp; Liên hệ
             </div>
             <p className="text-neutral-400 leading-relaxed">
-              <strong className="text-neutral-300 block mb-1">Cơ sở 1:</strong>
-              227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP. Hồ Chí Minh
+              <strong className="text-neutral-300 block mb-1">Trụ sở hoạt động chính (Cơ sở 2):</strong>
+              Phòng A315, Tòa nhà A, Khu phố 6, P. Linh Trung, TP. Thủ Đức, TP.HCM
             </p>
             <p className="text-neutral-400 leading-relaxed">
-              <strong className="text-neutral-300 block mb-1">Cơ sở 2:</strong>
-              Khu phố 6, Phường Linh Trung, TP. Thủ Đức, TP. Hồ Chí Minh
+              <strong className="text-neutral-300 block mb-1">Cơ sở 1:</strong>
+              227 Nguyễn Văn Cừ, Phường 4, Quận 5, TP. Hồ Chí Minh
             </p>
             <p className="text-neutral-400 leading-relaxed">
               <strong className="text-neutral-300 block mb-1">Đơn vị quản lý:</strong>
@@ -142,7 +150,7 @@ export const Footer: React.FC<FooterProps> = ({ clubInfo, onNavClick }) => {
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-neutral-500 text-[11px]">
           <div>
-            Bản quyền © 2018 - 2026 Câu lạc bộ Học thuật NES. Khoa Vật lý – Vật lý kỹ thuật, Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM.
+            Bản quyền © 2008 - 2026 Câu lạc bộ Học thuật NES. Khoa Vật lý – Vật lý kỹ thuật, Trường ĐH Khoa học Tự nhiên, ĐHQG-HCM.
           </div>
           <button
             onClick={scrollToTop}
